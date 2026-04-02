@@ -1,0 +1,272 @@
+h1. SxException
+
+h2. Defining Exceptions
+
+p1. When writing code dependent on the environment of the system,
+    failures in execution flow may arise at system level boundaries. Failure
+    cases of system calls provided by system libraries may be similar across
+    system boundaries in terms of cause, but the details usually differ.
+    In order to provide an abstraction for handling system dependent errors,
+    exceptions are employed. @SxAccelerate@ provides a way of defining
+    exception categories and tags in order to group related errors and to
+    provide a way for handling exceptions based on those categories and tags.
+    A category and a tag along with arguments define an exception type.
+    Exceptions in the environment arise from issues such as:
+
+    * insufficient memory
+    * insufficient file I/O permissions
+    * disk capacity
+    * network connection loss
+    * etc.
+
+p1. *Important*: Exceptions must not be used for normal program control flow.
+
+p1. An exception category can be defined by:
+
+{{{cpp
+SX_EXCEPTION_CAT ("FileIO");
+}}}
+
+p1. Exception tags can be defined as follows:
+
+{{{cpp
+SX_EXCEPTION_TAG ("FileNotFound");
+}}}
+
+p1. Exception tags and categories can only be defined once. Exception tags derive
+    their exact meaning from the category in which they are used. An exception
+    type is described by:
+
+{{{cpp
+SX_EXCEPTION_TYPE ("FileIO", "FileNotFound", "filepath", SxString);
+}}}
+
+p1. The first argument specifies the category, the second tag narrows down the
+    error and the third and fourth argument provide a short description and the
+    argument type. The types are restricted to types handleable by @SxVariant@.
+    The number of possible arguments is currently restricted to three (three
+    types and three descriptions). The reasoning behind this is to provide high
+    quality, translatable error messages to the user. For the developer it is
+    possible to check whether a thrown exception belongs to a certain category
+    or contains a certain tag in order to decide whether the error is
+    recoverable. Defining exception types for any application results in a list
+    of exceptions specific for this application, which may look like:
+
+    * FileIO
+      ** FileNotFound:  filepath (SxString)
+      ** NoPermissions: filepath (SxString), file permissions (int)
+    * Network
+      ** PortInUse: ip (SxString), port (SxString)
+
+h2. Throwing exceptions, @SX\_THROW (...)@
+
+p1. Exception of defined types can be thrown by providing the category along
+    with the tag and its argument(s). In an example, where the exception types
+    are defined as above, a file I/O operation may throw an exception in case
+    the file was not found:
+
+{{{cpp
+SxArray<char> lowLevelFileIO (const SxString &filename)
+{
+   FILE *fp = fopen (filename.getElems (), "r");
+   if (!fp) {
+      if (errno == ENOENT) {
+         SX_THROW ("FileIO", "FileNotFound", filename);
+      } //else if ...
+   }
+}
+}}}
+
+h2. Chaining Exceptions @SX\_RETHROW (e, ...)@
+
+p1. When catching exceptions, it might be helpful, for handling exceptions or
+    providing better user error messages, to add the current context when
+    handing the error to the program layer above. This can be done by chaining
+    exceptions:
+
+{{{cpp
+SX_EXCEPTION_CAT ("MyDataProcessing");
+SX_EXCEPTION_TAG ("NoUserConfig");
+//...
+SX_EXCEPTION_TYPE ("MyDataProcessing", "NoUserConfig", "required file", SxString);
+
+void processData (SxString filename)
+{
+   try {
+      userConfig = lowLevelFileIO ("config.dat");
+   } catch (SxException e) {
+      SX_RETHROW (e, "MyDataProcessing", "NoUserConfig", "config.dat");
+   }
+   // ... read and process data
+}
+}}}
+
+p1. When re-throwing exceptions, an exception stack is built. The bottommost
+    exception in the stack is the first exception that was thrown, whereas the
+    topmost exception is the last exception that was thrown. This allows for
+    traversing back to the origin of the exception without losing the context
+    from each layer from which it was re-thrown. The caught exception is the
+    topmost exception in the stack.
+
+h2. Handling Exceptions
+
+p1. Imagine a network class which is able to handle low level TCP/IP
+    connections. On top of this class, another class, which provides a specific
+    protocol for communicating with a server, is defined.
+
+p1. The @Network@ class may look like:
+
+{{{cpp
+SX_EXCEPTION_CAT ("Network");
+SX_EXCEPTION_TAG ("Timeout");
+SX_EXCEPTION_TYPE ("Network", "Timeout", "timeoutMS", int);
+
+class Network {
+   public:
+      void connect (const SxString &host, const SxString &service);
+      void disconnect ();
+      void send (const SxArray<char> &data);
+   //...
+};
+}}}
+
+p1. The protocol implements a chat client and derives from @Network@. The
+    pseudo implementation for @ChatClient@:
+
+{{{cpp
+SX_EXCEPTION_CAT ("ChatClient");
+SX_EXCEPTION_TAG ("MessageTransfer");
+//...
+SX_EXCEPTION_TYPE ("ChatClient", "MessageTransfer", "to", SxString);
+
+class ChatClient : public Network {
+   public:
+      void connectToChat (...);
+      void sendPM (SxString to, SxString msg);
+   // ...
+};
+}}}
+
+p1. When using the @ChatClient@ class in order to send a chat message an
+    exception may be thrown in a chain, beginning in the @Network@ class:
+
+{{{cpp
+int main ()
+{
+   ChatClient myChat (...);
+   // ...
+   try {
+      myChat.sendPM ("Anne", "Hello, Anne! How are you?");
+   } catch (SxException e) {
+      if (e.hasTag ("Timeout")) {
+         // reconnect, or try again
+      } else {
+         // ...
+      }
+   }
+}
+}}}
+
+p1. The exception handling now takes place after deciding that the error is
+    potentially recoverable. By either a reconnect or simply trying
+    again.
+
+p1. There are multiple ways provided to check whether an exception is related to
+    a category or is associated to a specific tag. Checking whether *the* last
+    thrown exception (topmost in the chain) has a specific tag can be done by:
+
+{{{cpp
+try {
+   // ...
+} catch (SxException e) {
+   if (e.isTag<"NoPermissions"_SX> ()) {
+      // ...
+   }
+}
+}}}
+
+p1. In order to check if a tag is somewhere in the stack of exceptions, call:
+
+{{{cpp
+try {
+   // ...
+} catch (SxException e) {
+   if (e.hasTag<"FileNotFound"_SX> ()) {
+      // ...
+   }
+}
+}}}
+
+p1. The same works for categories as well:
+
+{{{cpp
+try {
+// ...
+} catch (SxException e) {
+   if (e.isCategory<"FileIO"_SX> ()) {
+      // ...
+   }
+}
+}}}
+
+{{{cpp
+try {
+// ...
+} catch (SxException e) {
+   if (e.hasCategory<"FileIO"_SX> ()) {
+      // ...
+   }
+}
+}}}
+
+p1. Checking for both is also possible:
+
+{{{cpp
+try {
+// ...
+} catch (SxException e) {
+   if (e.is<"FileIO"_SX,"FileNotFound"_SX> ()) {
+      // ...
+   }
+}
+}}}
+
+{{{cpp
+try {
+// ...
+} catch (SxException e) {
+   if (e.has<"FileIO"_SX,"FileNotFound"_SX> ()) {
+      // ...
+   }
+}
+}}}
+
+h2. Exception runtime tracing
+
+p1. The DEBUG mode of SxAccelerate allows for runtime tracing and runtime
+    breakpoints in SxAccelerate. In the following the tracing of exceptions
+    is discussed.
+
+p1. Errors which are handled in exceptions are not interrupting the program
+    flow. Thus, sometimes it is challenging the identify and understand those
+    situations during the development process.
+
+p1. In SxAccelerate all exceptions are derived from @SxException@ which throws
+    an exception with error message, source file name and line number as
+    default behavior. The command line interface provided by @SxCLI@ is
+    shipped with a hidden built-in command line option @--no-exceptions@:
+
+{{{
+myprogram --no-exceptions ...
+}}}
+
+p1. Once a program is invoked with this parameter all SxException instances
+    will implicitly trigger an @SX\_BREAK@. This allows the developer of a
+    program to interact with any instance of an exception by:
+
+    * resuming the throwing of an exception (hit @<ENTER>@),
+    * printing a function call stack (hit @<t>@ for trace) to understand the
+      origin of the exception invokation,
+    * create a memory core (hit @<c>@), to continue with a _post-mortem_
+      analysis to inspect all relevant variables at the time of throwing
+      the exception.

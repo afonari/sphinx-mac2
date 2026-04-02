@@ -1,0 +1,215 @@
+h1. @SxJSONParser@
+
+p1. The JSON parser library provides the functionality of parsing JSON data.
+    It also provides efficient way to validate the given JSON data provided
+    the type definition file.
+
+p1. In order to use the parser we have to include the following header files.
+
+{{{cpp
+#include <SxJSONParser.h>
+#include <SxSymbol.h>
+#include <SxSchema.h>
+#include <SxException.h>
+}}}
+
+h2. Reading JSON data @readString@ / @readFile@
+
+p1. The reading JSON data from string or a file can be done by using the
+    corresponding function as shown in the following example:
+
+{{{cpp
+try  {
+   SxJSONParser parser;
+   parser.readString ("{\"name\":\"Marc\",
+                        \"age\":11,
+                        \"DOB\":\"1970-01-01\"}");
+}  catch (SxException e)  {
+   if (e.isCategory<"ParserKit"_SX> ())  {
+      cout << "Syntax error: " << e.toString () << endl;
+   }  else  {
+      e.printStack ();
+   }
+}
+}}}
+
+h2. Schema validation
+
+p1. The schema validation can be performed for a JSON data by using
+    the @SxSchema@ class. This class requires a type definition in
+    JSON format to be able to validate the corresponding data. The
+    following example shows how to validate the JSON given in previous
+    example:
+
+{{{cpp
+try  {
+   SxJSONParser schemaParser;
+   schemaParser.readString ("
+      {\"type\":\"group\",
+       \"name\":{\"type\":\"string\"},
+       \"age\":{\"type\":\"int\",
+                \"min\":0,
+                \"max\":100},
+       \"DOB\":{\"type\":\"string\",
+                \"regex\":\"^\\d\\d\\d\\d-\\d\\d-\\d\\d$\",
+                \"regexHint\":\"YYYY-MM-DD\"}}");
+
+   SxSchema schema (schemaParser.getAst ());
+   schema.validate (parser.getAst ());
+}  catch (SxException e)  {
+   if (e.isCategory<"ParserKit"_SX> ())  {
+      cout << "Syntax error: " << e.toString () << endl;
+   }  else if (e.isCategory<"SchemaValidation"_SX> ())  {
+      cout << "Validation error: " << e.toString () << endl;
+   }  else  {
+      e.printStack ();
+   }
+}
+}}}
+
+p1. As shown in the example code above, the schema type definition for
+    an @int@ can optionally have @min@ and @max@. Same is true for types
+    @real@ and @string@. In case of type @string@ it is also possible to
+    specify @regex@ to be matched during validation. If @regex@ key is
+    specified, then @regexHint@ must also be provided that can be displayed
+    to user in case of an error.
+
+h2. Error handling
+
+p1. There are two main categories of exceptions that can occur.
+    The @ParserKit@ category represents an error in parsing a file.
+    While the @SchemaValidation@ is the exception category that
+    represents an error in validation of the JSON data.  The exact
+    category can be found using the @isCategory@ function of @SxException@
+    object as shown below:
+
+{{{cpp
+try  {
+   SxJSONParser schemaParser;
+   schemaParser.readString ("
+      {\"type\":\"group\",
+       \"name\":{\"type\":\"string\"},
+       \"age\":{\"type\":\"int\",
+                \"min\":0,
+                \"max\":100},
+       \"DOB\":{\"type\":\"string\",
+                \"regex\":\"^\\d\\d\\d\\d-\\d\\d-\\d\\d$\",
+                \"regexHint\":\"YYYY-MM-DD\"}}");
+
+   SxSchema schema (schemaParser.getAst ());
+   schema.validate (parser.getAst ());
+}  catch (SxException e)  {
+   if (e.isCategory<"ParserKit"_SX> ())  {
+      cout << "Syntax error: " << e.toString () << endl;
+   }  else if (e.isCategory<"SchemaValidation"_SX> ())  {
+      cout << "Validation error: " << e.toString () << endl;
+   }  else  {
+      e.printStack ();
+   }
+}
+}}}
+
+h2. Iteration @SxParserKit::SxSymbol@
+
+p1. The @SxSymbol@ class provides convenient functions to iterate over
+    the JSON data and access individual elements. It is defined in the
+    namespace @SxParserKit@. The following example shows how to access
+    the members of a JSON object:
+
+{{{cpp
+try  {
+   using namespace SxParserKit;
+   SxJSONParser parser;
+   parser.readString ("{\"k1\":\"v1\",
+                        \"k2\":11,
+                        \"k3\":44.5,
+                        \"k4\":[1,2,4]}");
+
+   SxSymbol sym = parser.getRootSymbol ();
+
+   cout << sym.getElem ("k1").toString ();
+
+   cout << sym.getElem ("k2").toInt ();
+
+   cout << sym.getElem ("k3").toDouble ();
+
+   SxList<int64_t> lst = sym.getElem ("k4").toIntList ();
+   cout << lst;
+}  catch (SxException e)  {
+   if (e.isCategory<"ParserKit"_SX> ())  {
+      cout << "Syntax error:" << e.toString () << endl;
+   }  else if (e.isCategory<"SxSymbol"_SX> ())  {
+      cout << "SymbolIO error: " << e.toString () << endl;
+   }  else  {
+      e.printStack ();
+   }
+}
+}}}
+
+p1. The above code will result in the following output:
+
+{{{
+v1
+11
+44.5
+[1,2,4]
+}}}
+
+h3. @toList()@
+
+p1. In cases when types of JSON elements are not known in advance,
+    the @toList ()@ function can be used to get a list of type
+    @SxList<SxSymbol>@. While iterating over each element, the
+    exact type of element can be found using @SxSymbol::Type@.
+    The following example code shows how the iteration would
+    look like:
+
+{{{cpp
+try  {
+   using namespace SxParserKit;
+   SxJSONParser parser;
+   parser.readString ("{\"k1\":\"v1\",
+                        \"k2\":11,
+                        \"k3\":44.5,
+                        \"k4\":[1,2,4]}");
+
+   SxSymbol sym = parser.getRootSymbol ();
+
+   SxList<SxSymbol> elems = sym.toList ();
+
+   elems.foreach ([](auto it) {
+                     cout << it->getName () << ":";
+                     auto type = it->getType ();
+                     if (type == SxSymbol::Type::Int)
+                        cout << it->toInt ();
+                     else if (type == SxSymbol::Type::Double)
+                        cout << it->toDouble ();
+                     else if (type == SxSymbol::Type::String)
+                        cout << it->toString ();
+                     else if (type == SxSymbol::Type::Bool)
+                        cout << it->toBool ();
+                     else if (type == SxSymbol::Type::Group)
+                        SxSymbol jsonObj = *it;
+                     else if (type == SxSymbol::Type::List)
+                        cout << it->toIntList ();
+                  });
+}  catch (SxException e)  {
+   if (e.isCategory<"ParserKit"_SX> ())  {
+      cout << "Syntax error:" << e.toString () << endl;
+   }  else if (e.isCategory<"SxSymbol"_SX> ())  {
+      cout << "SymbolIO error: " << e.toString () << endl;
+   }  else  {
+      e.printStack ();
+   }
+}
+}}}
+
+p1. The above example code results in the following output:
+
+{{{
+k1:v1
+k2:11
+k3:44.5
+k4:[1,2,4]
+}}}
+

@@ -1,0 +1,18 @@
+pDos { type="group"; optional;
+   file { type="string"; optional; }
+   
+   // --- atom selection
+   atoms { type="list"; optional; xor="atoms,atomRange,elements"; }
+   elements { type="stringlist"; optional; xor="atoms,atomRange,elements"; }
+   atomRange { type="group"; optional; xor="atoms,atomRange,elements";
+      from { type="int"; min=1; }
+      to { type="int"; }
+   }
+   sumOnly { type="flag"; optional; xor="atoms,atomRange,elements"; }
+   
+   range { type="vector"; dim=2; optional; }
+   fine { type="int"; optional; }
+   broadening { type="real"; optional; }
+
+   verbose { type="flag"; optional; }
+}

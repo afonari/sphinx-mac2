@@ -1,0 +1,42 @@
+ricTS            { type="group"; optional;
+   maxSteps      { type="int"; min=1; optional; }
+   dX            { type="real"; min=0.; optional; }
+   dF            { type="real"; min=0.; optional; }
+   dEnergy       { type="real"; min=0.; optional; }
+   nProjectors   { type="int"; min=1; optional; }
+   maxStepLength { type="real"; min=0.; optional; }
+   driftFilter   { type="flag"; optional; }
+   transCurvature { type="real"; max=0.; optional; }
+   maxDirRot     { type="real"; min=0.; max=1.; optional; }
+   scheme        { type="int"; min=0; max=3; optional; }
+
+   softModeDamping { type="real"; min=0.; optional; }
+
+   ric { type="group"; optional;
+      maxDist { type="real"; optional; min=1; }
+      typifyThreshold { type="real"; optional; min=0.001; }
+      rmsThreshold    { type="real"; optional; min=1; }
+      planeCutLimit   { type="real"; optional; min=0.5; }
+      withAngles      { type="flag"; optional; }
+      bvkAtoms        { type="list"; optional; }
+   }
+
+   anyStationaryPoint { type="flag"; optional;
+                        xor="transDir,transPath,anyStationaryPoint";
+                        not="transDir,transPath"; }
+   transDir      { type="vector"; xor="transDir,transPath,anyStationaryPoint"; }
+   transPath     { type="group"; xor="transDir,transPath,anyStationaryPoint";
+      file { type="string"; xor="file,dir"; not="dir,atomId,atomIds";}
+      dir           { type="vector"; xor="file,dir"; not="file";}
+      atomId        { type="int"; min=1; xor="atomId,atomIds,file"; and="dir"; not="file,atomIds";}
+      atomIds       { type="vector"; xor="atomId,atomIds,file"; and="dir"; not="file,atomId";}
+   }
+
+
+   bornOppenheimer { type="group";optional;
+      include <std/ccg.std>;
+      include <std/scf.std>;
+      include <std/lcao.std>;
+   }
+
+}

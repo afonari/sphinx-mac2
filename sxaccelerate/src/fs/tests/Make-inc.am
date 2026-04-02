@@ -1,0 +1,57 @@
+# This file has been generated automatically.
+# Do not edit it. Instead invoke
+#    (g)make filelist
+# From the source folder
+
+
+include_HEADERS = 
+
+bin_PROGRAMS     = test-sxchmod test-sxfile test-sxfileinfo test-sxfileio test-sxfsaction test-sxfstest 
+
+test_sxchmod_SOURCES   = $(AUX_SRC)
+test_sxchmod_SOURCES  += test-sxchmod.cpp
+test_sxchmod_CPPFLAGS  = $(AM_CPPFLAGS) -DSXLIBTOOL="\"@SXLIBTOOL@\""
+test_sxchmod_LDADD     =  $(SXIMPORTLIBS)
+test_sxchmod_LDADD    +=  @SX_SHORTCUT_LIBS@
+test_sxchmod_LDADD    +=  $(SXIMPORTOBJS)
+
+test_sxfile_SOURCES   = $(AUX_SRC)
+test_sxfile_SOURCES  += test-sxfile.cpp
+test_sxfile_CPPFLAGS  = $(AM_CPPFLAGS) -DSXLIBTOOL="\"@SXLIBTOOL@\""
+test_sxfile_LDADD     =  $(SXIMPORTLIBS)
+test_sxfile_LDADD    +=  @SX_SHORTCUT_LIBS@
+test_sxfile_LDADD    +=  $(SXIMPORTOBJS)
+
+test_sxfileinfo_SOURCES   = $(AUX_SRC)
+test_sxfileinfo_SOURCES  += test-sxfileinfo.cpp
+test_sxfileinfo_CPPFLAGS  = $(AM_CPPFLAGS) -DSXLIBTOOL="\"@SXLIBTOOL@\""
+test_sxfileinfo_LDADD     =  $(SXIMPORTLIBS)
+test_sxfileinfo_LDADD    +=  @SX_SHORTCUT_LIBS@
+test_sxfileinfo_LDADD    +=  $(SXIMPORTOBJS)
+
+test_sxfileio_SOURCES   = $(AUX_SRC)
+test_sxfileio_SOURCES  += test-sxfileio.cpp
+test_sxfileio_CPPFLAGS  = $(AM_CPPFLAGS) -DSXLIBTOOL="\"@SXLIBTOOL@\""
+test_sxfileio_LDADD     =  $(SXIMPORTLIBS)
+test_sxfileio_LDADD    +=  @SX_SHORTCUT_LIBS@
+test_sxfileio_LDADD    +=  $(SXIMPORTOBJS)
+
+test_sxfsaction_SOURCES   = $(AUX_SRC)
+test_sxfsaction_SOURCES  += test-sxfsaction.cpp
+test_sxfsaction_CPPFLAGS  = $(AM_CPPFLAGS) -DSXLIBTOOL="\"@SXLIBTOOL@\""
+test_sxfsaction_LDADD     =  $(SXIMPORTLIBS)
+test_sxfsaction_LDADD    +=  @SX_SHORTCUT_LIBS@
+test_sxfsaction_LDADD    +=  $(SXIMPORTOBJS)
+
+test_sxfstest_SOURCES   = $(AUX_SRC)
+test_sxfstest_SOURCES  += test-sxfstest.cpp
+test_sxfstest_CPPFLAGS  = $(AM_CPPFLAGS) -DSXLIBTOOL="\"@SXLIBTOOL@\""
+test_sxfstest_LDADD     =  $(SXIMPORTLIBS)
+test_sxfstest_LDADD    +=  @SX_SHORTCUT_LIBS@
+test_sxfstest_LDADD    +=  $(SXIMPORTOBJS)
+
+AM_CPPFLAGS += -I$(top_builddir)/fs -I$(top_srcdir)/fs
+AM_CPPFLAGS += -I$(top_builddir)/util -I$(top_srcdir)/util
+AM_CPPFLAGS += -I$(top_builddir)/nonstd -I$(top_srcdir)/nonstd
+AM_CPPFLAGS += -I$(abs_builddir) -I$(srcdir)
+

@@ -1,0 +1,22 @@
+# This file has been generated automatically.
+# Do not edit it. Instead invoke
+#    (g)make filelist
+# From the source folder
+
+
+include_HEADERS = sobol.hpp
+
+lib_LTLIBRARIES       = libsxlgpl.la
+libsxlgpl_la_SOURCES  = $(AUX_SRC)
+libsxlgpl_la_SOURCES += sobol.cpp
+
+libsxlgpl_la_LIBADD   = $(SXIMPORTLIBS)
+libsxlgpl_la_LIBADD  += 
+libsxlgpl_la_LIBADD  += $(SXIMPORTOBJS)
+libsxlgpl_la_LDFLAGS  = -version-info $(VERSION)
+if COND_BUILD_WIN32
+   libsxlgpl_la_LDFLAGS += -no-undefined
+endif
+
+AM_CPPFLAGS += -I$(abs_builddir) -I$(srcdir)
+

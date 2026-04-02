@@ -1,0 +1,137 @@
+# This file has been generated automatically.
+# Do not edit it. Instead invoke
+#    (g)make filelist
+# From the source folder
+
+
+include_HEADERS = SxAtomicOrbitals.h \
+                  SxAtomicOrbitalsGR.h \
+                  SxBasisAug.h \
+                  SxBlockDensityMatrix.h \
+                  SxBundle3.h \
+                  SxBundle3.hpp \
+                  SxDFT.h \
+                  SxDFTBFilesReader.h \
+                  SxDFTConfig.h \
+                  SxDensity.h \
+                  SxDipoleCorrZ.h \
+                  SxEESGProj.h \
+                  SxFermi.h \
+                  SxHamInit.h \
+                  SxHamSolver.h \
+                  SxHamiltonian.h \
+                  SxHubbardMO.h \
+                  SxHubbardU.h \
+                  SxInitKP.h \
+                  SxInitPAW.h \
+                  SxInitPW.h \
+                  SxKdotP.h \
+                  SxMuPW.h \
+                  SxOrbital.h \
+                  SxPAWBasis.h \
+                  SxPAWExchange.h \
+                  SxPAWHamiltonian.h \
+                  SxPAWOverlap.h \
+                  SxPAWPot.h \
+                  SxPAWRho.h \
+                  SxPAWSet.h \
+                  SxPBExHole.h \
+                  SxPW.h \
+                  SxPWHamiltonian.h \
+                  SxPWSet.h \
+                  SxPartialWaveBasis.h \
+                  SxPerturbK.h \
+                  SxPreconditioner.h \
+                  SxPseudoPot.h \
+                  SxPsiSet.h \
+                  SxRSProj.h \
+                  SxRadMat.h \
+                  SxRadialAtom.h \
+                  SxRadialMesh.h \
+                  SxRho.h \
+                  SxRhoFilter.h \
+                  SxRhoMixer.h \
+                  SxSpinConstraint.h \
+                  SxStrain.h \
+                  SxTBAtomAtom.h \
+                  SxTBHamSolver.h \
+                  SxTBSpecies.h \
+                  SxVDW.h \
+                  SxXC.h \
+                  SxXCFunctional.h \
+                  d3Data.h
+
+lib_LTLIBRARIES       = libsxdft.la
+libsxdft_la_SOURCES  = $(AUX_SRC)
+libsxdft_la_SOURCES += SxAtomicOrbitals.cpp \
+   SxAtomicOrbitalsGR.cpp \
+   SxBlockDensityMatrix.cpp \
+   SxDensity.cpp \
+   SxDFTBFilesReader.cpp \
+   SxDipoleCorrZ.cpp \
+   SxEESGProj.cpp \
+   SxFermi.cpp \
+   SxHamiltonian.cpp \
+   SxHamInit.cpp \
+   SxHamSolver.cpp \
+   SxHubbardMO.cpp \
+   SxHubbardU.cpp \
+   SxInitKP.cpp \
+   SxInitPAW.cpp \
+   SxInitPW.cpp \
+   SxKdotP.cpp \
+   SxMuPW.cpp \
+   SxPartialWaveBasis.cpp \
+   SxPAWBasis.cpp \
+   SxPAWExchange.cpp \
+   SxPAWHamiltonian.cpp \
+   SxPAWOverlap.cpp \
+   SxPAWPot.cpp \
+   SxPAWRho.cpp \
+   SxPAWSet.cpp \
+   SxPBExHole.cpp \
+   SxPerturbK.cpp \
+   SxPreconditioner.cpp \
+   SxPseudoPot.cpp \
+   SxPW.cpp \
+   SxPWHamiltonian.cpp \
+   SxPWSet.cpp \
+   SxRadialAtom.cpp \
+   SxRadMat.cpp \
+   SxRho.cpp \
+   SxRhoFilter.cpp \
+   SxRhoMixer.cpp \
+   SxRSProj.cpp \
+   SxSpinConstraint.cpp \
+   SxStrain.cpp \
+   SxTBAtomAtom.cpp \
+   SxTBHamSolver.cpp \
+   SxTBSpecies.cpp \
+   SxVDW.cpp \
+   SxXC.cpp \
+   SxXCFunctional.cpp
+
+libsxdft_la_LIBADD   = $(SXIMPORTLIBS)
+libsxdft_la_LIBADD  += @SX_FFT_LIBS@ @SX_BLAS_LIBS@
+libsxdft_la_LIBADD  += $(SXIMPORTOBJS)
+libsxdft_la_LDFLAGS  = -version-info $(VERSION)
+if COND_BUILD_WIN32
+   libsxdft_la_LDFLAGS += -no-undefined
+endif
+
+AM_CPPFLAGS += -I$(top_builddir)/lgpl -I$(top_srcdir)/lgpl
+AM_CPPFLAGS += -I$(top_builddir)/dirac -I$(top_srcdir)/dirac
+AM_CPPFLAGS += -I$(top_builddir)/geom -I$(top_srcdir)/geom
+AM_CPPFLAGS += -I$(top_builddir)/io2 -I$(top_srcdir)/io2
+AM_CPPFLAGS += -I@SXACCELERATE_SRC@/io
+AM_CPPFLAGS += -I@SXACCELERATE_BUILD@/io
+AM_CPPFLAGS += -I@SXACCELERATE_SRC@/fs
+AM_CPPFLAGS += -I@SXACCELERATE_SRC@/ipc
+AM_CPPFLAGS += -I@SXACCELERATE_SRC@/math
+AM_CPPFLAGS += -I@SXACCELERATE_SRC@/util
+AM_CPPFLAGS += -I@SXACCELERATE_BUILD@/util
+AM_CPPFLAGS += -I@SXACCELERATE_SRC@/nonstd
+AM_CPPFLAGS += -I@SXACCELERATE_SRC@/mpi
+AM_CPPFLAGS += -I@SXACCELERATE_BUILD@/mpi
+AM_CPPFLAGS += -I$(abs_builddir) -I$(srcdir)
+
