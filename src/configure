@@ -24681,7 +24681,7 @@ fi
    fi
 fi
 
-SX_NETCDF_LIBS="-lnetcdf"
+SX_NETCDF_LIBS="" #"-lnetcdf"
 
 if test x"$ac_cv_enable_numlibschecks" = x"yes"; then
 

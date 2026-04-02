@@ -20,6 +20,8 @@
 #include <SxError.h>
 #include <unistd.h>
 
+#define USE_NO_NETCDF4
+
 #ifndef USE_NO_NETCDF4
 // ============================================================================
 // Original implementation with NetCDF support
@@ -1409,17 +1411,10 @@ SxBinIO &SxBinIO::operator= (const SxBinIO &in)
    return *this;
 }
 
-SxString SxBinIO::createTempName (const SxString &tmpDir)
+SxString SxBinIO::createTempName (const SxString &)
 {
-   SxString nameTemplate = tmpDir + "/sxbinXXXXXX";
-   char *tmp = strdup (nameTemplate.ascii ());
-   int fd = mkstemp (tmp);
-   if (fd == -1)  {
-      SX_THROW ("Cannot create temporary file name");
-   }
-   close (fd);
-   SxString res (tmp);
-   free (tmp);
+   throwNetCDFError ();
+   SxString res ("");
    return res;
 }
 
