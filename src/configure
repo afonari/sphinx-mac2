@@ -5878,7 +5878,7 @@ elif test -d /Library/Preferences; then
    PKG_TYPE=pkg
    DIST_OS=Darwin
    DIST_NAME="MacOSX"
-   DIST_VERSION=`/usr/bin/sw_vers|grep ProductVersion|cut -f 2`
+   DIST_VERSION=`/usr/bin/sw_vers|grep "^ProductVersion:"|head -1|cut -f 2`
    DIST_MAJOR=`echo $DIST_VERSION | cut -f 1 -d '.'`
    DIST_MINOR=`echo $DIST_VERSION | cut -f 2 -d '.'`
    DIST_PATCH=`echo $DIST_VERSION | cut -f 3 -d '.'`
@@ -24367,16 +24367,16 @@ else $as_nop
   as_fn_error $? "Cannot find Intel MKL.  Use the flag --with-mklpath to point to an MKL installation. Use --with-mklpath=<mkl include path>:<mkl lib path> for full flexibility." "$LINENO" 5
 fi
 
-      as_ac_File=`printf "%s\n" "ac_cv_file_$mkllibpath/libmkl_core.so" | $as_tr_sh`
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $mkllibpath/libmkl_core.so" >&5
-printf %s "checking for $mkllibpath/libmkl_core.so... " >&6; }
+      as_ac_File=`printf "%s\n" "ac_cv_file_$mkllibpath/libmkl_core.dylib" | $as_tr_sh`
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $mkllibpath/libmkl_core.dylib" >&5
+printf %s "checking for $mkllibpath/libmkl_core.dylib... " >&6; }
 if eval test \${$as_ac_File+y}
 then :
   printf %s "(cached) " >&6
 else $as_nop
   test "$cross_compiling" = yes &&
   as_fn_error $? "cannot check for file existence when cross compiling" "$LINENO" 5
-if test -r "$mkllibpath/libmkl_core.so"; then
+if test -r "$mkllibpath/libmkl_core.dylib"; then
   eval "$as_ac_File=yes"
 else
   eval "$as_ac_File=no"
@@ -24432,6 +24432,8 @@ fi
          mkllibpath=`cd ${ac_cv_with_mklpath}/lib/intel64 && pwd`
       elif test -f ${ac_cv_with_mklpath}/lib/libmkl_sequential.so ; then
          mkllibpath=`cd ${ac_cv_with_mklpath}/lib && pwd`
+      elif test -f ${ac_cv_with_mklpath}/lib/libmkl_sequential.dylib ; then
+         mkllibpath=`cd ${ac_cv_with_mklpath}/lib && pwd`
       else
          as_fn_error $? "Cannot find Intel MKL library path. Expected ${ac_cv_with_mklpath}/lib/intel64 or  ${ac_cv_with_mklpath}/lib/em64t " "$LINENO" 5
       fi
@@ -24447,6 +24449,9 @@ fi
          mkl_thread=mkl_gnu_thread
          ;;
       icpc)
+         mkl_thread=mkl_intel_thread
+         ;;
+      clang++)
          mkl_thread=mkl_intel_thread
          ;;
       *)

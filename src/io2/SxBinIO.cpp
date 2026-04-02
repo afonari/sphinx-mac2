@@ -20,6 +20,11 @@
 #include <SxError.h>
 #include <unistd.h>
 
+#ifndef USE_NO_NETCDF4
+// ============================================================================
+// Original implementation with NetCDF support
+// ============================================================================
+
 #ifdef USE_PARALLEL_NETCDF4
 #include <SxLoopMPI.h>
 #include <mpi.h>
@@ -44,7 +49,7 @@
 
 #ifdef CYGWIN
    extern "C" int mkstemp (char *);
-#endif 
+#endif
 
 //------------------------------------------------------------------------------
 //
@@ -1346,3 +1351,120 @@ void SxBinIO::readRow (const SxString &varName,
    err = nc_get_vara_double (ncId, id, start, count, val->elements);
    if (err != NC_NOERR)  ncError (err, varName);
 }
+
+#else
+// ============================================================================
+// Stub implementation WITHOUT NetCDF support (USE_NO_NETCDF4 defined)
+// All methods throw runtime errors if called
+// ============================================================================
+
+#ifdef CYGWIN
+   extern "C" int mkstemp (char *);
+#endif
+
+static void throwNetCDFError () {
+   SX_THROW ("SxBinIO: NetCDF support was disabled at compile time. "
+             "This SPHInX build cannot read/write .sxb binary files. "
+             "Please use VASP_LOCPOT, Socorro, or QuantumEspresso file formats instead.");
+}
+
+SxBinIO::SxBinIO ()
+   : ncId(-1), fp(NULL), isOpen(false), err(0),
+     mode(UNKNOWN), ncMode(0)
+{
+   // Stub constructor - does nothing
+}
+
+SxBinIO::SxBinIO (const SxString &filename_, Mode mode_)
+   : filename(filename_), ncId(-1), fp(NULL), isOpen(false), err(0),
+     mode(mode_), ncMode(0)
+{
+   throwNetCDFError ();
+}
+
+SxBinIO::SxBinIO (const SxBinIO &in)
+   : filename(in.filename), ncId(in.ncId), fp(in.fp),
+     isOpen(in.isOpen), err(in.err),
+     mode(in.mode), ncMode(in.ncMode)
+{
+   throwNetCDFError ();
+}
+
+SxBinIO::~SxBinIO ()
+{
+   // Stub destructor - does nothing
+}
+
+SxBinIO &SxBinIO::operator= (const SxBinIO &in)
+{
+   if (this != &in)  {
+      filename = in.filename;
+      ncId     = in.ncId;
+      fp       = in.fp;
+      isOpen   = in.isOpen;
+      err      = in.err;
+      mode     = in.mode;
+      ncMode   = in.ncMode;
+   }
+   return *this;
+}
+
+SxString SxBinIO::createTempName (const SxString &tmpDir)
+{
+   SxString nameTemplate = tmpDir + "/sxbinXXXXXX";
+   char *tmp = strdup (nameTemplate.ascii ());
+   int fd = mkstemp (tmp);
+   if (fd == -1)  {
+      SX_THROW ("Cannot create temporary file name");
+   }
+   close (fd);
+   SxString res (tmp);
+   free (tmp);
+   return res;
+}
+
+void SxBinIO::open (const SxString &, Mode) { throwNetCDFError (); }
+void SxBinIO::close () { }
+void SxBinIO::ncError (int) const { throwNetCDFError (); }
+void SxBinIO::ncError () const { throwNetCDFError (); }
+void SxBinIO::ncError (int, const SxString &) const { throwNetCDFError (); }
+void SxBinIO::addDimension (const SxString &, int) const { throwNetCDFError (); }
+int SxBinIO::getDimension (const SxString &) const { throwNetCDFError (); return 0; }
+bool SxBinIO::contains (const SxString &) const { throwNetCDFError (); return false; }
+bool SxBinIO::containsDim (const SxString &) const { throwNetCDFError (); return false; }
+void SxBinIO::setMode (int) const { throwNetCDFError (); }
+int SxBinIO::getSize (const SxString &) const { throwNetCDFError (); return 0; }
+void SxBinIO::read (const SxString &, SxString *) const { throwNetCDFError (); }
+void SxBinIO::read (const SxString &, SxList<int> *, int) const { throwNetCDFError (); }
+void SxBinIO::write (const SxString &, const SxString &) const { throwNetCDFError (); }
+void SxBinIO::write (const SxString &, double) const { throwNetCDFError (); }
+void SxBinIO::read (const SxString &, double *) const { throwNetCDFError (); }
+void SxBinIO::read (const SxString &, SxVector3<int> *) const { throwNetCDFError (); }
+void SxBinIO::write (const SxString &, const SxVector3<int> &, const SxString &) const { throwNetCDFError (); }
+void SxBinIO::write (const SxString &, const SxVector3<double> &, const SxString &) const { throwNetCDFError (); }
+void SxBinIO::read (const SxString &, SxVector3<double> *) const { throwNetCDFError (); }
+void SxBinIO::write (const SxString &, const SxMatrix3<double> &, const SxString &) const { throwNetCDFError (); }
+void SxBinIO::read (const SxString &, SxMatrix3<double> *) const { throwNetCDFError (); }
+void SxBinIO::write (const SxString &, const SxArray<SxMatrix3<double> > &, const SxString &, const SxString &) const { throwNetCDFError (); }
+void SxBinIO::read (const SxString &, SxArray<SxMatrix3<double> > *) const { throwNetCDFError (); }
+void SxBinIO::writeVec (const SxString &, const SxVecRef<int> &, const SxString &, int, int, int) const { throwNetCDFError (); }
+void SxBinIO::readVec (const SxString &, SxVecRef<int> *, int, int) const { throwNetCDFError (); }
+void SxBinIO::writeVec (const SxString &, const SxVecRef<double> &, const SxString &, int, int, int) const { throwNetCDFError (); }
+void SxBinIO::readVec (const SxString &, SxVecRef<double> *, int, int) const { throwNetCDFError (); }
+void SxBinIO::writeVec (const SxString &, const SxVecRef<SxComplex16> &, const SxString &, int) const { throwNetCDFError (); }
+void SxBinIO::readVec (const SxString &, SxVecRef<SxComplex16> *, int, int) const { throwNetCDFError (); }
+void SxBinIO::writeMat (const SxString &, const SxVecRef<int> &, const SxString &, const SxString &, int, int) const { throwNetCDFError (); }
+void SxBinIO::readMat (const SxString &, SxVecRef<int> *, int, int, int, int) const { throwNetCDFError (); }
+void SxBinIO::writeMat (const SxString &, const SxVecRef<double> &, const SxString &, const SxString &, int, int) const { throwNetCDFError (); }
+void SxBinIO::writeRows (const SxString &, const SxVecRef<double> &, const SxString &, const SxString &, int, int, int) const { throwNetCDFError (); }
+void SxBinIO::readMat (const SxString &, SxVecRef<double> *, int, int, int, int) const { throwNetCDFError (); }
+void SxBinIO::writeMat (const SxString &, const SxVecRef<SxComplex16> &, const SxString &, const SxString &, int, int) const { throwNetCDFError (); }
+void SxBinIO::readMat (const SxString &, SxVecRef<SxComplex16> *, int, int, int, int) const { throwNetCDFError (); }
+void SxBinIO::writeMesh (const SxVecRef<double> &, const SxMatrix3<double> &, const SxVector3<int> &) { throwNetCDFError (); }
+void SxBinIO::writeMesh (const SxArray<SxVector<double> > &, const SxMatrix3<double> &, const SxVector3<int> &) const { throwNetCDFError (); }
+SxArray<SxVector<double> > SxBinIO::readMesh (SxMatrix3<double> *, SxVector3<int> *) const { throwNetCDFError (); return SxArray<SxVector<double> > (); }
+void SxBinIO::addDoubleVar (const SxString &, const SxString &, const SxString &) { throwNetCDFError (); }
+void SxBinIO::writeRow (const SxString &, const SxVecRef<double> &, int, int) { throwNetCDFError (); }
+void SxBinIO::readRow (const SxString &, SxVecRef<double> *, int, int) const { throwNetCDFError (); }
+
+#endif // USE_NO_NETCDF4
