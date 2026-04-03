@@ -8,9 +8,7 @@ arch -x86_64 ./configure --without-tools --disable-debug --enable-mkl --enable-m
 ```
 
 ```
-make -j8 && make install
-make -C src/tools sxdefectalign
-cp src/tools/.libs/sxdefectalign install_dir/bin/
+make -j8 && make install && make -C src/tools sxdefectalign && cp src/tools/.libs/sxdefectalign install_dir/bin/
 ```
 
 ## To list required libs to copy
@@ -50,9 +48,7 @@ unset PERL5LIB
 ```
 
 ```
-make -j8 && make install
-make -C src/tools sxdefectalign
-cp src/tools/.libs/sxdefectalign install_dir/bin/
+make -j8 && make install && make -C src/tools sxdefectalign && cp src/tools/.libs/sxdefectalign install_dir/bin/
 ```
 
 ## To list required libs to copy
