@@ -1,13 +1,20 @@
 # Mac
 
+```
 arch -x86_64 ./configure --without-tools --disable-debug --enable-mkl --enable-mklfft --with-mklpath="$INTEL_MKL"/include:"$INTEL_MKL"/lib --disable-openmp --disable-mpi --disable-numlibschecks CXXFLAGS="-arch x86_64" CFLAGS="-arch x86_64" LDFLAGS="-arch x86_64" --prefix=$PWD/install_dir
+```
 
+```
 make -j8 && make install
+```
 
+```
 make -C src/tools sxdefectalign
 cp src/tools/.libs/sxdefectalign install_dir/bin/
+```
 
 # To list required libs to copy
+```
 otool -L install_dir/bin/sxdefectalign
 
 install_dir/bin/sxdefectalign:
@@ -33,3 +40,4 @@ install_dir/bin/sxdefectalign:
     /usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)
     /System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation (compatibility version 150.0.0, current version 4201.0.0)
     /usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2000.67.0)
+```
