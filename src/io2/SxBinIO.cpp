@@ -1411,13 +1411,7 @@ SxBinIO &SxBinIO::operator= (const SxBinIO &in)
    return *this;
 }
 
-SxString SxBinIO::createTempName (const SxString &)
-{
-   throwNetCDFError ();
-   SxString res ("");
-   return res;
-}
-
+SxString SxBinIO::createTempName (const SxString &){ throwNetCDFError (); return SxString(); }
 void SxBinIO::open (const SxString &, Mode) { throwNetCDFError (); }
 void SxBinIO::close () { }
 void SxBinIO::ncError (int) const { throwNetCDFError (); }
