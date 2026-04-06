@@ -172,7 +172,7 @@ class SxVecResult<T, BandedMatrix> {
 
   */
 template<>
-class SxVecCompute<Simd>
+class SX_EXPORT_MATH SxVecCompute<Simd>
 {
    public:
       // --- The next 60 lines were generated from snippets/SxVecCompute.h snippet Simd_OP

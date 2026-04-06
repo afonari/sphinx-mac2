@@ -25196,7 +25196,10 @@ printf "%s\n" "$as_me: Using ${mkl_thread} for MKL threading" >&6;}
 
    # Windows uses .lib files and different linking
    if test x"$isWindowsOS" = x"yes"; then
-      SX_MKL_LIBS="-L${mkllibpath} mkl_intel_lp64.lib mkl_core.lib ${mkl_thread}.lib"
+      # MinGW cannot link MSVC .lib files - link directly to DLLs using -Wl to bypass libtool filtering
+      mklroot=`dirname \`dirname ${mkllibpath}\``
+      mkldllpath="${mklroot}/redist/intel64_win/mkl"
+      SX_MKL_LIBS="-Wl,${mkldllpath}/mkl_rt.dll"
    elif test x"${enable_shared}" = x"yes"; then
       SX_MKL_LIBS="-lmkl_intel_lp64 -lmkl_core -l${mkl_thread} -ldl"
    else

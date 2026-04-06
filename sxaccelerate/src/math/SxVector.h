@@ -79,7 +79,7 @@ class SX_EXPORT_MATH SxAuxData
 };
 
 // --- descriptor of allocated memory (incl. reference counting)
-class SxAllocMem
+class SX_EXPORT_MATH SxAllocMem
 {
    public:
       /// Allocated memory

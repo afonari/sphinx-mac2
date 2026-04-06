@@ -181,17 +181,16 @@ SxFile SxFSCreateAction::createTmpFile (const SxString &tmpDir,
    // Initializing the file descriptor with an invalid value so that an
    // exception is thrown in case that no mkstemp ()-function exists
    int fd = -1;
-#  ifdef HAVE_MKSTEMP
-      fd = ::mkstemp (str.elements);
-#  elif defined(WIN32)
+#  ifdef WIN32
       if (_wmktemp_s ((LPWSTR)str.elements, str.getSize ()) != 0)  {
          SX_THROW ("Can't create a temporary file '"
                    + res.getAbsPath () + "': _mktemp_s() failed.");
       }
       int mode = 0600;
       fd = ::_wopen ((LPCWSTR)str.elements, O_WRONLY | O_CREAT, mode);
-
-#  endif /* HAVE_MKSTEMP */
+#  elif defined(HAVE_MKSTEMP)
+      fd = ::mkstemp (str.elements);
+#  endif /* WIN32 */
 
    // --- Checking whether a valid temporary file could be generated
    if (fd < 0)  {
@@ -260,7 +259,7 @@ void SxFSCreateAction::updateFile (const SxFileInfo &target, int mode)
    }
    close (fd);
 
-#  if defined(LINUX)
+#  if defined(LINUX) && !defined(WIN32)
       // --- update both atime and mtime
       long t = static_cast<long>(SxTime::getRealTime ());
       struct timeval times[2];
@@ -272,7 +271,7 @@ void SxFSCreateAction::updateFile (const SxFileInfo &target, int mode)
          SX_THROW ("utimes('"+targetStr+"', "+SxString(t)+") error: "
                    + sxstrerror());
       }
-#  endif /* LINUX */
+#  endif /* LINUX && !WIN32 */
 }
 
 void SxFSCreateAction::updateDir (const SxFileInfo &/*target*/, int)

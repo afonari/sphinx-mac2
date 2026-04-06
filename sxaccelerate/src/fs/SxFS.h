@@ -20,6 +20,7 @@
 #     define SX_EXPORT_FS __declspec(dllimport)
 #  endif
 
+#  include <sys/stat.h>
 #  ifndef S_IRUSR
 #     define S_IRUSR    _S_IREAD
 #     define S_IWUSR    _S_IWRITE
@@ -34,12 +35,20 @@
 // --- redefine some POSIX functions to Windows style
 #  include <direct.h>
 #  include <io.h>
+// Define MSVC SAL annotations as empty for non-MSVC compilers
+#  ifndef _Check_return_
+#     define _Check_return_
+#  endif
+#  ifndef _In_z_
+#     define _In_z_
+#  endif
+#  ifndef _In_
+#     define _In_
+#  endif
 inline _Check_return_ int chdir (_In_z_ const char *p)         { return _chdir (p); }
 inline char *getcwd (char *b, size_t s)  { return _getcwd (b,(int)s); }
 inline _Check_return_ int rmdir (_In_z_ const char *d)         { return _rmdir (d); }
 inline int umask (_In_ int m)                 { return _umask (m); }
-
-#  define mode_t     int
 
 #else
 #  define SX_EXPORT_FS

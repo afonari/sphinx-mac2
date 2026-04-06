@@ -17,7 +17,9 @@
 #include <SxTimerThread.h>
 
 #ifdef WIN32
+#  ifndef _PID_T_
    typedef DWORD pid_t;
+#  endif
 
    class SX_EXPORT_IPC SxWinProcParams
    {

@@ -49,10 +49,10 @@ inline SxString SX_EXPORT_IO2 toString (const rapidxml::xml_base<char> *item)
 }
 
 /// Convert value into double
-double toDouble SX_EXPORT_IO2 (const rapidxml::xml_base<char> *item);
+double SX_EXPORT_IO2 toDouble (const rapidxml::xml_base<char> *item);
 
 /// Convert value into int
-int toInt SX_EXPORT_IO2 (const rapidxml::xml_base<char> *item);
+int SX_EXPORT_IO2 toInt (const rapidxml::xml_base<char> *item);
 
 /// Convert value into vector of doubles
 SxVector<double> SX_EXPORT_IO2 toVector (const rapidxml::xml_node<char> *item);

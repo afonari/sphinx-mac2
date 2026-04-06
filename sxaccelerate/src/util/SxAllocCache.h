@@ -142,7 +142,12 @@ class SX_EXPORT_UTIL alignas(64) SxAllocCache
 class SxAllocation
 {
    public:
+#if defined(WIN32) || defined(_WIN32)
+      // thread_local doesn't export well from DLLs on Windows
+      static SX_EXPORT_UTIL SxAllocCache *threadCache;
+#else
       static thread_local SxAllocCache *threadCache;
+#endif
       class TemporaryCache {
          private:
             /// The new temporary cache

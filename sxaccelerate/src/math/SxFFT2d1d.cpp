@@ -527,7 +527,7 @@ void SxFFT2d1d::addToRho (double weight, double *rho)
             ssize_t iv;
             SxComplex16 *workPlace = meshes + 4 * N3;
             double *rhoInWork = rho + offset;
-            ssize_t ivMax = min(4L, N12 - i12) * N3;
+            ssize_t ivMax = min((ssize_t)4, N12 - i12) * N3;
             v2df w2 = load2x(&weight);
             // unrolled loop with rho prefetching
             for (iv = 0;

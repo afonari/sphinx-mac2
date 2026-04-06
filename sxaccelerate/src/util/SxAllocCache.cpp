@@ -28,7 +28,11 @@
 //};
 //namespace { SxMyLog thread_local tLog; }
 
+#if defined(WIN32) || defined(_WIN32)
+SxAllocCache *SxAllocation::threadCache = NULL;
+#else
 thread_local SxAllocCache *SxAllocation::threadCache = NULL;
+#endif
 
 SxAllocCache::SxAllocCache (size_t maxSize_, unsigned char nSlots)
 : maxSize (maxSize_), nSlotsLarge(nSlots),
