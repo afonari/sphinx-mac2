@@ -35,11 +35,11 @@ enum FileType {
 };
 
 
-SxMeshR getPot SX_EXPORT_ADD_UTIL
+SX_EXPORT_ADD_UTIL SxMeshR getPot
    (SxCell &cell, SxMesh3D &mesh, SxString &fileName,
     FileType fileType, bool isHartree, SxAtomicStructure *structure);
 
-class SxRemesh1D SX_EXPORT_ADD_UTIL {
+class SX_EXPORT_ADD_UTIL SxRemesh1D {
    public:
       SxFFT1d oldFFT, newFFT;
       int mul;
@@ -70,7 +70,7 @@ inline SxMeshR remesh1D (const SxMeshR &pot, ssize_t N, int mul = 1)
           .remesh (pot);
 }
 
-SxVector<double> readLine SX_EXPORT_ADD_UTIL
+SX_EXPORT_ADD_UTIL SxVector<double> readLine
                           (const SxCell &potCell,
                            const SxMesh3D &potMesh,
                            const SxMeshR &potData,
@@ -79,13 +79,13 @@ SxVector<double> readLine SX_EXPORT_ADD_UTIL
                            const SxCell &cell,
                            const SxString &file);
 
-SxVector<double> average SX_EXPORT_ADD_UTIL (const SxVecRef<double> &x, double w);
+SX_EXPORT_ADD_UTIL SxVector<double> average (const SxVecRef<double> &x, double w);
 
-int getMappedAtom SX_EXPORT_ADD_UTIL (const Coord &pos,
+SX_EXPORT_ADD_UTIL int getMappedAtom (const Coord &pos,
                                  SxAtomicStructure &structure,
                                  const int iSpecies);
 
-FileType getFileType SX_EXPORT_ADD_UTIL (SxCLI &cli);
+SX_EXPORT_ADD_UTIL FileType getFileType (SxCLI &cli);
 
 }
 

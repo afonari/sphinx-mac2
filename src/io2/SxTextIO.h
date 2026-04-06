@@ -151,7 +151,7 @@ class SX_EXPORT_IO2 SxTextIO
           This class collects all the columns and writes it in
           the destructor.
         */
-      class ColumnWrite {
+      class SX_EXPORT_IO2 ColumnWrite {
          private:
             SxList<SxVecRef<double, GeneralMatrix> > data;
             SxString format;

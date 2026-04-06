@@ -474,7 +474,7 @@ void SxEPRHyper::compute (const SxAtomicStructure &structure,
 
             for (int i = 0; i < 3; i++) eigAbs(i) = fabs (eigA.vals(i));
 
-            SxArray<long int> sortIdx = eigAbs.getSortIdx();
+            auto sortIdx = eigAbs.getSortIdx();
 
             for (int i = 2; i >= 0 ; i--) {
                

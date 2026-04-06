@@ -13,6 +13,7 @@
 //
 // ---------------------------------------------------------------------------
 
+#include <SxParallelInit.h>
 #include <SxParallelHierarchy.h>
 #include <SxParser.h>
 #include <SxLoopMPI.h>

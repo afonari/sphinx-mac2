@@ -104,6 +104,11 @@ SX_LOOP(iDir(3))
          : limit (-1), i(i_)
       { }
 
+      /// Initializer for long long / ssize_t on Windows 64-bit
+      SxAutoLoop (long long i_)
+         : limit (-1), i(static_cast<ssize_t>(i_))
+      { }
+
       /// Forbidden copy constructor
       // note: this is forbidden, because setting limits in copies
       // would not change the actual loop limit.

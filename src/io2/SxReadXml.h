@@ -39,7 +39,7 @@ rapidxml::xml_attribute<char>* SX_EXPORT_IO2
 getAttr (const rapidxml::xml_node<char> *node, const char* name);
 
 /// Count number of sub-nodes with a given name
-int count (const rapidxml::xml_node<char> *node, const char *name);
+int SX_EXPORT_IO2 count (const rapidxml::xml_node<char> *node, const char *name);
 
 /// Convert value into SxString
 inline SxString SX_EXPORT_IO2 toString (const rapidxml::xml_base<char> *item)

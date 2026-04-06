@@ -25,7 +25,7 @@
 class SX_EXPORT_EXT SxDefectConc {
    public:
    /// Data describing a single defect
-   class Defect {
+   class SX_EXPORT_EXT Defect {
       public:
          /// Standard formation energy
          SxVector<double> E0;
@@ -115,7 +115,7 @@ class SX_EXPORT_EXT SxDefectConc {
 
    };
 
-   class Band {
+   class SX_EXPORT_EXT Band {
       public:
          /// Energy
          double E0;
@@ -163,7 +163,7 @@ class SX_EXPORT_EXT SxDefectConc {
          void print (double kT) const;
    };
 
-   class Reaction {
+   class SX_EXPORT_EXT Reaction {
       public:
          /// Frequency prefactor
          double prefactor;
@@ -194,7 +194,7 @@ class SX_EXPORT_EXT SxDefectConc {
                                    
    };
 
-   class ReactionSystem {
+   class SX_EXPORT_EXT ReactionSystem {
       public:
          /// Reactions
          SxArray<Reaction> reactions;

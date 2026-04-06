@@ -10,7 +10,11 @@
 //
 // ---------------------------------------------------------------------------
 
-#define SXVEC_INSTANCE template
+#ifdef WIN32
+#  define SXVEC_INSTANCE template __declspec(dllexport)
+#else
+#  define SXVEC_INSTANCE template
+#endif
 #include <SxVector.h>
 
 // --- The next 300 lines were generated from snippets/SxVecCompute.cpp snippet Simd_abs_real
