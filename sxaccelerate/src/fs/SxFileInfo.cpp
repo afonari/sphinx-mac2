@@ -925,7 +925,7 @@ void SxFileInfo::Cache::update ()
 
       setAccessTime ((unsigned long) (statBuf.st_atime));
       setModificationTime ((unsigned long) (statBuf.st_mtime));
-#     ifdef LINUX
+#     if defined(LINUX) && !defined(WIN32)
          setAccessTimeMS ((unsigned long long) (statBuf.st_atime * 1000
                           + statBuf.st_atim.tv_nsec / 1000000));
          setModificationTimeMS ((unsigned long long) (statBuf.st_mtime * 1000
