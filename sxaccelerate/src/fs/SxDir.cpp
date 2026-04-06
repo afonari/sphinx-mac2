@@ -94,8 +94,13 @@ SxString SxDir::getInstallPath ()
       // --- cmd.exe environment
       if (SxFSAction::test_d (execPath + "share"))
          installPath = execPath + "/..";
-	   else
+	   else {
+#ifdef SX_SOLUTION_PATH
 		   installPath = SxString(SX_SOLUTION_PATH) + "/src";
+#else
+         installPath = execPath + "/..";  // fallback for MinGW builds
+#endif
+      }
       return installPath;
 
 #  endif /* WIN32 */

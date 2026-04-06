@@ -833,6 +833,7 @@ COND_BUILD_MOBILE_FALSE
 COND_BUILD_MOBILE_TRUE
 COND_BUILD_WIN32_FALSE
 COND_BUILD_WIN32_TRUE
+WIN32FLAGS
 BUILD_DARWIN_FALSE
 BUILD_DARWIN_TRUE
 BUILD_LINUX_FALSE
@@ -6343,6 +6344,13 @@ fi
 else
   COND_BUILD_WIN32_TRUE='#'
   COND_BUILD_WIN32_FALSE=
+fi
+
+# Set WIN32FLAGS to define WIN32 macro on Windows
+if test x"$isWindowsOS" = x"yes"; then
+  WIN32FLAGS="-DWIN32"
+else
+  WIN32FLAGS=""
 fi
 
  if test x"$isMobile"    = x"yes"; then
@@ -26358,11 +26366,18 @@ if test x"${ac_cv_enable_mkl}"  = x"yes"; then
       as_fn_error $? "Cannot find Intel MKL.  Use the flag --with-mklpath to point to an MKL installation." "$LINENO" 5
    fi
    if echo "${ac_cv_with_mklpath}" | grep -q : ; then
-      mklincludepath=`echo "${ac_cv_with_mklpath}" | sed -e's/:.*//'`
+      # Handle Windows paths with drive letters (C:) vs Unix path separator (:)
+      # Windows path separator pattern: :[A-Za-z]:/ (e.g., :C:/)
+      if echo "${ac_cv_with_mklpath}" | grep -q ':[A-Za-z]:/' ; then
+        mklincludepath=`echo "${ac_cv_with_mklpath}" | sed -e's/:[A-Za-z]:.*//'`
+        mkllibpath=`echo "${ac_cv_with_mklpath}" | sed -e's/.*:\([A-Za-z]:.*\)/\1/'`
+      else
+        mklincludepath=`echo "${ac_cv_with_mklpath}" | sed -e's/:.*//'`
+        mkllibpath=`echo "${ac_cv_with_mklpath}" | sed -e's/.*://'`
+      fi
       if test -d "$mklincludepath" ; then
         mklincludepath=`cd $mklincludepath; pwd`
       fi
-      mkllibpath=`echo "${ac_cv_with_mklpath}" | sed -e's/.*://'`
       if test -d "$mkllibpath" ; then
         mkllibpath=`cd $mkllibpath; pwd`
       fi
@@ -26391,30 +26406,24 @@ else $as_nop
   as_fn_error $? "Cannot find Intel MKL.  Use the flag --with-mklpath to point to an MKL installation. Use --with-mklpath=<mkl include path>:<mkl lib path> for full flexibility." "$LINENO" 5
 fi
 
-      as_ac_File=`printf "%s\n" "ac_cv_file_$mkllibpath/libmkl_core.dylib" | $as_tr_sh`
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $mkllibpath/libmkl_core.dylib" >&5
-printf %s "checking for $mkllibpath/libmkl_core.dylib... " >&6; }
-if eval test \${$as_ac_File+y}
-then :
-  printf %s "(cached) " >&6
-else $as_nop
-  test "$cross_compiling" = yes &&
-  as_fn_error $? "cannot check for file existence when cross compiling" "$LINENO" 5
-if test -r "$mkllibpath/libmkl_core.dylib"; then
-  eval "$as_ac_File=yes"
-else
-  eval "$as_ac_File=no"
-fi
-fi
-eval ac_res=\$$as_ac_File
-	       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-printf "%s\n" "$ac_res" >&6; }
-if eval test \"x\$"$as_ac_File"\" = x"yes"
-then :
+      # Check for MKL core library with platform-specific extension
+      mkl_core_found=no
+      if test -r "$mkllibpath/libmkl_core.dylib"; then
+        mkl_core_found=yes
+      elif test -r "$mkllibpath/libmkl_core.so"; then
+        mkl_core_found=yes
+      elif test -r "$mkllibpath/mkl_core.lib"; then
+        mkl_core_found=yes
+      fi
 
-else $as_nop
-  as_fn_error $? "Cannot find Intel MKL.  Use the flag --with-mklpath to point to an MKL installation. Use --with-mklpath=<mkl include path>:<mkl lib path> for full flexibility." "$LINENO" 5
-fi
+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for MKL core library in $mkllibpath" >&5
+printf %s "checking for MKL core library in $mkllibpath... " >&6; }
+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $mkl_core_found" >&5
+printf "%s\n" "$mkl_core_found" >&6; }
+
+      if test "x$mkl_core_found" = "xno"; then
+        as_fn_error $? "Cannot find Intel MKL.  Use the flag --with-mklpath to point to an MKL installation. Use --with-mklpath=<mkl include path>:<mkl lib path> for full flexibility." "$LINENO" 5
+      fi
 
       CPPFLAGS="$CPPFLAGS -I$mklincludepath"
    else
@@ -26454,12 +26463,16 @@ fi
          mkllibpath=`cd ${ac_cv_with_mklpath}/lib/em64t && pwd`
       elif test -d ${ac_cv_with_mklpath}/lib/intel64 ; then
          mkllibpath=`cd ${ac_cv_with_mklpath}/lib/intel64 && pwd`
+      elif test -d ${ac_cv_with_mklpath}/lib/intel64_win ; then
+         mkllibpath=`cd ${ac_cv_with_mklpath}/lib/intel64_win && pwd`
       elif test -f ${ac_cv_with_mklpath}/lib/libmkl_sequential.so ; then
          mkllibpath=`cd ${ac_cv_with_mklpath}/lib && pwd`
       elif test -f ${ac_cv_with_mklpath}/lib/libmkl_sequential.dylib ; then
          mkllibpath=`cd ${ac_cv_with_mklpath}/lib && pwd`
+      elif test -f ${ac_cv_with_mklpath}/lib/mkl_sequential.lib ; then
+         mkllibpath=`cd ${ac_cv_with_mklpath}/lib && pwd`
       else
-         as_fn_error $? "Cannot find Intel MKL library path. Expected ${ac_cv_with_mklpath}/lib/intel64 or  ${ac_cv_with_mklpath}/lib/em64t " "$LINENO" 5
+         as_fn_error $? "Cannot find Intel MKL library path. Expected ${ac_cv_with_mklpath}/lib/intel64, ${ac_cv_with_mklpath}/lib/intel64_win, or ${ac_cv_with_mklpath}/lib/em64t" "$LINENO" 5
       fi
    fi
 
@@ -27205,7 +27218,10 @@ printf "%s\n" "$as_me: Using ${mkl_thread} for MKL threading" >&6;}
       mkl_thread=mkl_sequential
    fi
 
-   if test x"${enable_shared}" = x"yes"; then
+   # Windows uses .lib files and different linking
+   if test x"$isWindowsOS" = x"yes"; then
+      SX_MKL_LIBS="-L${mkllibpath} mkl_intel_lp64.lib mkl_core.lib ${mkl_thread}.lib"
+   elif test x"${enable_shared}" = x"yes"; then
       SX_MKL_LIBS="-lmkl_intel_lp64 -lmkl_core -l${mkl_thread} -ldl"
    else
       mkdir -p mkllibs
@@ -27227,18 +27243,27 @@ printf "%s\n" "$as_me: Using ${mkl_thread} for MKL threading" >&6;}
       SX_MKL_LIBS="-L${mkllibpath} -L`pwd`/mkllibs -lmkl_intel_lp64 -lmkl_core -l${mkl_thread} -lmkl_core_1 -l${mkl_thread}_1 -lmkl_core_2"
    fi
 
-   SX_MKL_LIBS="$SX_MKL_LIBS -ldl -lpthread -lm"
+   # Add platform-specific libraries (not -ldl and -lpthread on Windows)
+   if test x"$isWindowsOS" = x"yes"; then
+      SX_MKL_LIBS="$SX_MKL_LIBS -lm"
+   else
+      SX_MKL_LIBS="$SX_MKL_LIBS -ldl -lpthread -lm"
+   fi
 
    SX_BLAS_LIBS="$SX_MKL_LIBS $SX_BLAS_LIBS"
    LIBS="$SX_BLAS_LIBS $LIBS"
 
-   ac_fn_c_check_func "$LINENO" "dnrm2" "ac_cv_func_dnrm2"
+   # Skip MKL link test on Windows (MinGW can't link with MSVC .lib files in configure)
+   if test x"$isWindowsOS" != x"yes"; then
+      ac_fn_c_check_func "$LINENO" "dnrm2" "ac_cv_func_dnrm2"
 if test "x$ac_cv_func_dnrm2" = xyes
 then :
 
 else $as_nop
   as_fn_error $? "Cannot link the MKL" "$LINENO" 5
 fi
+
+   fi
 
 fi
 
@@ -28175,7 +28200,9 @@ if test "x$ac_cv_lib_shortcut_sxnumlibs_createShortcut" = xyes
 then :
   SX_SHORTCUT_LIBS="-lshortcut"
 else $as_nop
-  as_fn_error $? "Cannot link against WinShortCut helper" "$LINENO" 5
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Cannot link against WinShortCut helper - skipping" >&5
+printf "%s\n" "$as_me: WARNING: Cannot link against WinShortCut helper - skipping" >&6;}
+  SX_SHORTCUT_LIBS=""
 fi
 
 

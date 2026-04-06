@@ -18,8 +18,8 @@
 #include <string.h>   /* strstr */
 #ifndef WIN32
 #  include <unistd.h>   /* gethostname() */
-#  include <sys/stat.h>
 #endif
+#include <sys/stat.h>   /* chmod() - needed on all platforms including MinGW */
 #ifdef WIN32
 #  include <Windows.h>
 #endif
@@ -189,7 +189,10 @@ void sxGetExecPath (char *resPath, size_t len)
 {
    if (!resPath)  abort ();
 
-#  if defined(LINUX)
+#  if defined(WIN32)
+      DWORD size = (DWORD)len;
+      GetModuleFileName (NULL, resPath, size);
+#  elif defined(LINUX)
       pid_t pid = getpid ();
       SxString link = "/proc/" + SxString(pid) + "/exe";
       ssize_t idx = readlink (link.ascii(), resPath, len); // returns int
@@ -214,9 +217,6 @@ void sxGetExecPath (char *resPath, size_t len)
       mib[2] = KERN_PROC_PATHNAME;
       mib[3] = -1;
       sysctl (mib, 4, resPath, &size, NULL, 0);
-#  elif defined(WIN32)
-      DWORD size = (DWORD)len;
-      GetModuleFileName (NULL, resPath, size);
 #  elif defined(SX_ANDROID)
       // FIXME: implement something like https://github.com/gpakosz/whereami 
       SX_THROW ("Can't access path to executable");
