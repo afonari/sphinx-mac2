@@ -133,8 +133,8 @@ $ ldd  /c/source/sphinx-mac2/install_dir/bin/sxdefectalign.exe
         msvcp_win.dll => /c/Windows/System32/msvcp_win.dll (0x7ff9eb950000)
 ```
 
-# Notest
+# Notes
 
 * `AUTOCONF=: AUTOHEADER=: AUTOMAKE=: ACLOCAL=:` needed to disable calls to autoconf when make is called
 * architecture is set to sse4.2 (might not matter for Mac)
-  
+* To test, see STU 34409.
