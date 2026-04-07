@@ -11,7 +11,7 @@ arch -x86_64 ./configure --without-tools --disable-debug --enable-mkl --enable-m
 make AUTOCONF=: AUTOHEADER=: AUTOMAKE=: ACLOCAL=: install && make AUTOCONF=: AUTOHEADER=: AUTOMAKE=: ACLOCAL=: -C src/tools sxdefectalign && cp src/tools/.libs/sxdefectalign install_dir/bin/
 ```
 
-## To list required libs to copy
+## Libs to copy in instal_dir
 ```
 otool -L install_dir/bin/sxdefectalign
 
@@ -50,7 +50,7 @@ install_dir/bin/sxdefectalign:
 make -j8 AUTOCONF=: AUTOHEADER=: AUTOMAKE=: ACLOCAL=: install && make AUTOCONF=: AUTOHEADER=: AUTOMAKE=: ACLOCAL=: -C src/tools sxdefectalign && cp src/tools/.libs/sxdefectalign install_dir/bin/
 ```
 
-## To list required libs to copy
+## Libs to copy in instal_dir
 ```
 ldd install_dir/bin/sxdefectalign 
 	linux-vdso.so.1 (0x00007ffce4de3000)
@@ -93,6 +93,7 @@ ldd install_dir/bin/sxdefectalign
 make -j8 AUTOCONF=: AUTOHEADER=: AUTOMAKE=: ACLOCAL=: install && make AUTOCONF=: AUTOHEADER=: AUTOMAKE=: ACLOCAL=: -C src/tools sxdefectalign.exe && cp src/tools/.libs/sxdefectalign.exe install_dir/bin/
 ```
 
+## Libs to copy in instal_dir
 ```
 $ ldd  /c/source/sphinx-mac2/install_dir/bin/sxdefectalign.exe
         ntdll.dll => /c/Windows/SYSTEM32/ntdll.dll (0x7ff9edac0000)
