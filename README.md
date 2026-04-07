@@ -8,7 +8,7 @@ arch -x86_64 ./configure --without-tools --disable-debug --enable-mkl --enable-m
 ```
 
 ```
-make -j8 && make install && make -C src/tools sxdefectalign && cp src/tools/.libs/sxdefectalign install_dir/bin/
+make AUTOCONF=: AUTOHEADER=: AUTOMAKE=: ACLOCAL=: install && make AUTOCONF=: AUTOHEADER=: AUTOMAKE=: ACLOCAL=: -C src/tools sxdefectalign && cp src/tools/.libs/sxdefectalign install_dir/bin/
 ```
 
 ## To list required libs to copy
@@ -43,12 +43,11 @@ install_dir/bin/sxdefectalign:
 # Linux
 
 ```
-unset PERL5LIB
 ./configure ac_cv_lib_gfortran_rand=no ac_cv_lib_gfortran__gfortran_copy_string=no --without-tools --disable-debug --enable-mkl --enable-mklfft --with-mklpath=$INTEL_MKL --disable-openmp --disable-mpi --disable-numlibschecks --prefix=$PWD/install_dir
 ```
 
 ```
-make -j8 && make install && make -C src/tools sxdefectalign && cp src/tools/.libs/sxdefectalign install_dir/bin/
+make -j8 AUTOCONF=: AUTOHEADER=: AUTOMAKE=: ACLOCAL=: install && make AUTOCONF=: AUTOHEADER=: AUTOMAKE=: ACLOCAL=: -C src/tools sxdefectalign && cp src/tools/.libs/sxdefectalign install_dir/bin/
 ```
 
 ## To list required libs to copy
@@ -84,3 +83,58 @@ ldd install_dir/bin/sxdefectalign
 	/lib64/ld-linux-x86-64.so.2 (0x00007fd750d21000)
 ```
 
+# Windows:
+
+```
+./configure --without-tools --disable-debug --enable-mkl --enable-mklfft --with-mklpath="$INTEL_MKL"/include:"$INTEL_MKL"/lib/intel64_win --disable-openmp --disable-mpi --disable-numlibschecks --prefix=$PWD/install_dir LIBS="-ldbghelp"
+```
+
+```
+make -j8 AUTOCONF=: AUTOHEADER=: AUTOMAKE=: ACLOCAL=: install && make AUTOCONF=: AUTOHEADER=: AUTOMAKE=: ACLOCAL=: -C src/tools sxdefectalign.exe && cp src/tools/.libs/sxdefectalign.exe install_dir/bin/
+```
+
+```
+$ ldd  /c/source/sphinx-mac2/install_dir/bin/sxdefectalign.exe
+        ntdll.dll => /c/Windows/SYSTEM32/ntdll.dll (0x7ff9edac0000)
+        KERNEL32.DLL => /c/Windows/System32/KERNEL32.DLL (0x7ff9ec4c0000)
+        KERNELBASE.dll => /c/Windows/System32/KERNELBASE.dll (0x7ff9eb260000)
+        msvcrt.dll => /c/Windows/System32/msvcrt.dll (0x7ff9ec410000)
+        libsxdft-1.dll => /c/source/sphinx-mac2/install_dir/bin/libsxdft-1.dll (0x7ff9b71d0000)
+        libsxaddutil-1.dll => /c/source/sphinx-mac2/install_dir/bin/libsxaddutil-1.dll (0x7ff9cfb60000)
+        libsxdirac-1.dll => /c/source/sphinx-mac2/install_dir/bin/libsxdirac-1.dll (0x7ff9cfa80000)
+        libsxio2-1.dll => /c/source/sphinx-mac2/install_dir/bin/libsxio2-1.dll (0x7ff9cf910000)
+        libsxgeom-1.dll => /c/source/sphinx-mac2/install_dir/bin/libsxgeom-1.dll (0x7ff9c1e50000)
+        libgcc_s_seh-1.dll => /mingw64/bin/libgcc_s_seh-1.dll (0x7ff9e3130000)
+        libsxmath-1.dll => /c/source/sphinx-mac2/install_dir/bin/libsxmath-1.dll (0x7ff9c1d50000)
+        libsxutil-1.dll => /c/source/sphinx-mac2/install_dir/bin/libsxutil-1.dll (0x7ff9c1c70000)
+        libsxlgpl-1.dll => /c/source/sphinx-mac2/install_dir/bin/libsxlgpl-1.dll (0x7ff9beb30000)
+        libsxfs-1.dll => /c/source/sphinx-mac2/install_dir/bin/libsxfs-1.dll (0x7ff9cf880000)
+        libsxio-1.dll => /c/source/sphinx-mac2/install_dir/bin/libsxio-1.dll (0x7ff9d9160000)
+        libsxmpi-1.dll => /c/source/sphinx-mac2/install_dir/bin/libsxmpi-1.dll (0x7ff9e28e0000)
+        libstdc++-6.dll => /mingw64/bin/libstdc++-6.dll (0x7ff9be780000)
+        libsxstruct-1.dll => /c/source/sphinx-mac2/install_dir/bin/libsxstruct-1.dll (0x7ff9be5a0000)
+        libstdc++-6.dll => /mingw64/bin/libstdc++-6.dll (0x22dcfc50000)
+        libsxnonstd-1.dll => /c/source/sphinx-mac2/install_dir/bin/libsxnonstd-1.dll (0x7ff9d32a0000)
+        libwinpthread-1.dll => /mingw64/bin/libwinpthread-1.dll (0x7ff9d2ce0000)
+        dbghelp.dll => /c/Windows/SYSTEM32/dbghelp.dll (0x7ff9e5e10000)
+        ucrtbase.dll => /c/Windows/System32/ucrtbase.dll (0x7ff9eb030000)
+        mkl_rt.dll => /c/builds/2026-2/schrodinger_buildenv_packages/.pixi/envs/schrodinger/mkl-2017.1.040/redist/intel64_win/mkl/mkl_rt.dll (0x7ff9b5160000)
+        libsxipc-1.dll => /c/source/sphinx-mac2/install_dir/bin/libsxipc-1.dll (0x7ff9cd4d0000)
+        ADVAPI32.dll => /c/Windows/System32/ADVAPI32.dll (0x7ff9ed9c0000)
+        sechost.dll => /c/Windows/System32/sechost.dll (0x7ff9ec220000)
+        bcrypt.dll => /c/Windows/System32/bcrypt.dll (0x7ff9eb710000)
+        libsxclassic-1.dll => /c/source/sphinx-mac2/install_dir/bin/libsxclassic-1.dll (0x7ff9c76c0000)
+        RPCRT4.dll => /c/Windows/System32/RPCRT4.dll (0x7ff9ec2e0000)
+        USER32.dll => /c/Windows/System32/USER32.dll (0x7ff9eba30000)
+        win32u.dll => /c/Windows/System32/win32u.dll (0x7ff9eb740000)
+        dbgcore.DLL => /c/Windows/SYSTEM32/dbgcore.DLL (0x7ff9e5bb0000)
+        GDI32.dll => /c/Windows/System32/GDI32.dll (0x7ff9ec120000)
+        gdi32full.dll => /c/Windows/System32/gdi32full.dll (0x7ff9eb140000)
+        msvcp_win.dll => /c/Windows/System32/msvcp_win.dll (0x7ff9eb950000)
+```
+
+# Notest
+
+* `AUTOCONF=: AUTOHEADER=: AUTOMAKE=: ACLOCAL=:` needed to disable calls to autoconf when make is called
+* architecture is set to sse4.2 (might not matter for Mac)
+  
