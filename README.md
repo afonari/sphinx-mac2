@@ -137,4 +137,43 @@ $ ldd  /c/source/sphinx-mac2/install_dir/bin/sxdefectalign.exe
 
 * `AUTOCONF=: AUTOHEADER=: AUTOMAKE=: ACLOCAL=:` needed to disable calls to autoconf when make is called
 * architecture is set to sse4.2 (might not matter for Mac)
-* To test, see STU 34409.
+
+# Test
+
+See STU 34409. Example:
+
+```
+sxdefectalign --charge 3 --eps 12.9 --vdef v_elec_relaxed_vga_222_chgm3.cub --vref v_elec_pristine_222.cub --ecut 60 --pos 0.5,0.5,0.5 --relative --average 5.2 --qe
+Reading mesh+cell...
+mesh=135 x 135 x 135
+Reading atoms...
+New species Z=31
+New species Z=33
+Reading potential...
+cell defect = [a1={21.2161,0,0},a2={0,21.2161,0},a3={0,0,21.2161}]
+Reading mesh+cell...
+mesh=135 x 135 x 135
+Reading atoms...
+New species Z=31
+New species Z=33
+Reading potential...
+cell bulk = [a1={21.2161,0,0},a2={0,21.2161,0},a3={0,0,21.2161}]
+Excess Electrons = 3 located at {10.608,10.608,10.608}
+Atomic structure specified.
+ng=74892
+V average: -0.0268551 eV
+Averaging (33.0881 points)
+Averaging (33.0881 points)
+Averaging (33.0881 points)
+vAlign=0 eV
++-----------------------------------------------------------------------------
+=== Intermediate results (unscreened) ===
+Isolated energy       : 3.59048
+Periodic energy       : 2.98868
+Difference (Hartree)  : -0.601801
+Difference (eV)       : -16.3758
++-----------------------------------------------------------------------------
+Calculation performed with epsilon = 12.9
++-----------------------------------------------------------------------------
+Defect correction (eV): 1.26944 (incl. screening & alignment)
+```
