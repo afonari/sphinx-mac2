@@ -37,7 +37,7 @@ SxFileParser::~SxFileParser ()
 void SxFileParser::open (const SxString &fileName)
 {
    SX_CHECK (!fp); // please close previous file first
-   fp = fopen (fileName.ascii (), "r");
+   fp = fopen (fileName.ascii (), "rb");
    if (!fp)  {
       cout << "Can't open file '" << fileName << "' for reading: "
            << sxstrerror() << endl;

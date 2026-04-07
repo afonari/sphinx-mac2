@@ -16,9 +16,9 @@
 SxAllocMem* SxAllocMem::create (ssize_t n, int memTypeIn)
 {
    SX_CHECK (n > 0, n);
-   // allocate handle (separate cacheline)
-   void *handle = SxAllocation::getAligned (roundCL(sizeof(SxAllocMem)),
-                                            roundCL(1));
+   // allocate handle using plain malloc so it can be freed with free()
+   // (on Windows, _aligned_malloc memory must use _aligned_free, not free)
+   void *handle = SxAllocation::get (roundCL(sizeof(SxAllocMem)));
    //SX_CHECK (handle);
    // construct SxAllocMem on this memory
    return new (handle) SxAllocMem((size_t)n, memTypeIn);

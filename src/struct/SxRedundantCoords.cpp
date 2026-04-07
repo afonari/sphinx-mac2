@@ -636,7 +636,7 @@ SxVector<double> SxRedundantCoords::applyH (const SxAtomicStructure &str,
             x.getSize (), str.getNAtoms ());
    SxVector<double> res(x.getSize ());
    res.set (0.);
-   res.reshape (max(x.getNRows (),1LL), max(x.getNCols (),1LL));
+   res.reshape (max(x.getNRows (),(ssize_t)1), max(x.getNCols (),(ssize_t)1));
    SX_LOOP(iTl)  {
       int nN = (int)idAtom(iTl).getSize ();
       if (nN == 0) continue;

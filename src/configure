@@ -11634,7 +11634,7 @@ fi
 found_compiler=yes
 case "$cxxname" in
    g++)  # GNU C/C++ Compiler
-      GCC_M_ARCH="${CXX_M_ARCH--march=native}"
+      GCC_M_ARCH="${CXX_M_ARCH--msse4.2}"
       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking GCC_M_ARCH" >&5
 printf %s "checking GCC_M_ARCH... " >&6; }
       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $GCC_M_ARCH" >&5
@@ -11684,7 +11684,7 @@ printf "%s\n" "$GCC_M_ARCH" >&6; }
       # -----------------------------------------------------------------------
       ;;
    clang++)  # GNU C/C++ Compiler
-      GCC_M_ARCH="${CXX_M_ARCH--march=native}"
+      GCC_M_ARCH="${CXX_M_ARCH--msse4.2}"
       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking GCC_M_ARCH" >&5
 printf %s "checking GCC_M_ARCH... " >&6; }
       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $GCC_M_ARCH" >&5
