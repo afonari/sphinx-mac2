@@ -8,7 +8,7 @@ arch -x86_64 ./configure --without-tools --disable-debug --enable-mkl --enable-m
 ```
 
 ```
-make AUTOCONF=: AUTOHEADER=: AUTOMAKE=: ACLOCAL=: install && make AUTOCONF=: AUTOHEADER=: AUTOMAKE=: ACLOCAL=: -C src/tools sxdefectalign && cp src/tools/.libs/sxdefectalign install_dir/bin/
+make -j8 AUTOCONF=: AUTOHEADER=: AUTOMAKE=: ACLOCAL=: install && make AUTOCONF=: AUTOHEADER=: AUTOMAKE=: ACLOCAL=: -C src/tools sxdefectalign && cp src/tools/.libs/sxdefectalign install_dir/bin/
 ```
 
 ## Libs to copy from the install_dir
