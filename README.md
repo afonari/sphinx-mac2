@@ -1,4 +1,5 @@
 All instructions are for after `source build_env` in the mmshare.
+Sphinx version 3.1 (see VERSION).
 
 # Mac
 
